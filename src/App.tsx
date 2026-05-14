@@ -15,7 +15,7 @@ export default function App() {
   const [chatStep, setChatStep] = useState(0);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const musicRef = useRef<HTMLAudioElement | null>(null);
-  const preferredMusicUrl = import.meta.env.VITE_BACKGROUND_MUSIC_URL || '/beauty-and-a-beat.mp3';
+  const preferredMusicUrl = import.meta.env.VITE_BACKGROUND_MUSIC_URL || new URL('../beauty-and-a-beat.mp3', import.meta.url).href;
 
   useEffect(() => {
     if (!musicRef.current) {
