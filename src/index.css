@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Be+Vietnam+Pro:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-pixel: "Press Start 2P", system-ui, sans-serif;
+  --font-vietnamese: "Be Vietnam Pro", sans-serif;
+  
+  --color-nes-dark: #12122b;
+  --color-nes-light: #f4f4f4;
+  --color-nes-primary: #14b8a6;
+  --color-nes-success: #4ade80;
+  --color-nes-error: #f43f5e;
+  --color-nes-warning: #fbbf24;
+}
+
+@layer base {
+  body {
+    @apply font-pixel bg-[#0a0a2c] text-nes-light m-0 p-0 overflow-hidden;
+    font-family: var(--font-pixel);
+  }
+}
+
+.font-vn {
+  font-family: var(--font-vietnamese);
+}
+
+/* Custom Pixel Animations */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.blink {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes cloud-move {
+  from { transform: translateX(110vw); }
+  to { transform: translateX(-20vw); }
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.star {
+  animation: star-twinkle 3s ease-in-out infinite;
+}
+
+.pixel-shadow {
+  box-shadow: 6px 6px 0px 0px rgba(0,0,0,0.6);
+}
+
+.pixel-border {
+  border: 4px solid #fff;
+  position: relative;
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.pixel-border::after {
+  content: "";
+  position: absolute;
+  top: -8px; bottom: -8px; left: 4px; right: 4px;
+  background: inherit;
+  z-index: -1;
+  border-left: 4px solid white;
+  border-right: 4px solid white;
+}
+
+.pixel-border-small {
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.2);
+}
+
+.pixel-lamp {
+  width: 6px;
+  height: 250px;
+  background: #111;
+  position: relative;
+  border-left: 2px solid #000;
+  border-right: 2px solid #000;
+}
+
+.pixel-lamp-top {
+  width: 48px;
+  height: 40px;
+  background: #fde047;
+  border: 4px solid #000;
+  position: absolute;
+  top: -40px;
+  left: -21px;
+  box-shadow: 0 0 50px rgba(253, 224, 71, 0.4);
+  /* Add lamp frame effect */
+  background-image: 
+    linear-gradient(to right, #000 4px, transparent 4px, transparent calc(100% - 4px), #000 calc(100% - 4px)),
+    linear-gradient(to bottom, #000 4px, transparent 4px, transparent calc(100% - 4px), #000 calc(100% - 4px));
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.pixel-lamp-glow {
+  position: absolute;
+  top: -20px; /* Centered on the top part */
+  left: 3px; 
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(253, 224, 71, 0.4) 0%, transparent 70%);
+  pointer-events: none;
+  animation: pulse 2s infinite ease-in-out;
+  transform: translate(-50%, -50%);
+}
+
+.cloud {
+  background: white;
+  opacity: 0.1;
+  position: absolute;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 rgba(255,255,255,0.1);
+  animation: cloud-move var(--duration) linear infinite;
+  z-index: 1;
+}
+
+.city-silhouette {
+  background: linear-gradient(to top, #000 0%, #05051a 100%);
+  clip-path: polygon(
+    0% 100%, 0% 70%, 2% 70%, 2% 60%, 5% 60%, 5% 75%, 8% 75%, 8% 50%, 
+    12% 50%, 12% 70%, 15% 70%, 15% 40%, 20% 40%, 20% 65%, 25% 65%, 25% 55%,
+    30% 55%, 30% 80%, 35% 80%, 35% 45%, 42% 45%, 42% 70%, 48% 70%, 48% 30%,
+    55% 30%, 55% 65%, 60% 65%, 60% 50%, 65% 50%, 65% 75%, 70% 75%, 70% 40%,
+    78% 40%, 78% 65%, 85% 65%, 85% 55%, 92% 55%, 92% 75%, 100% 75%, 100% 100%
+  );
+}

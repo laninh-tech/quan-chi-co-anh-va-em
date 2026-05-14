@@ -1,0 +1,8 @@
+{
+  "name": "Quận Chỉ Có Anh Và Em",
+  "description": "Kỷ niệm 1 năm của Quắn và Tít - Một hành trình đầy màu sắc pixel-art.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
