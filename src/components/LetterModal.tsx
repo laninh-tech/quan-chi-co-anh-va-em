@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Heart } from 'lucide-react';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 interface LetterModalProps {
   isOpen: boolean;
@@ -34,9 +32,9 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
   const [dodgePos, setDodgePos] = useState({ x: 0, y: 0 });
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
-  
+
+  const dowThuPdfUrl = new URL('../../DowThu.pdf', import.meta.url).href;
   const textRef = useRef<HTMLDivElement>(null);
-  const pdfRef = useRef<HTMLDivElement>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
@@ -140,23 +138,23 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
   };
 
   const handleDownload = async () => {
-    if (!pdfRef.current) return;
     setIsDownloading(true);
     
     try {
-      const canvas = await html2canvas(pdfRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#fff'
-      });
-      
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('DowThu.pdf');
+      const response = await fetch(dowThuPdfUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch DowThu.pdf: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = 'DowThu.pdf';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(blobUrl);
     } catch (error) {
       console.error('Download failed:', error);
     } finally {
@@ -175,7 +173,7 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
             initial={{ scale: 0, opacity: 0, y: 50 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0, opacity: 0 }}
-            className="pixel-border max-w-2xl w-full max-h-[85vh] flex flex-col p-10 bg-[#fffcf0] text-black border-[6px] border-black shadow-[16px_16px_0_rgba(0,0,0,0.5)]"
+            className="pixel-border w-full max-w-[96vw] md:max-w-2xl max-h-[92dvh] md:max-h-[85vh] flex flex-col p-4 md:p-10 bg-[#fffcf0] text-black border-[6px] border-black shadow-[16px_16px_0_rgba(0,0,0,0.5)]"
             style={{ 
               backgroundImage: 'radial-gradient(#d1d5db 1.5px, transparent 1.5px)',
               backgroundSize: '30px 30px',
@@ -183,18 +181,18 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
             }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between mb-8 border-b-[6px] border-black pb-4 bg-white/50 px-4 -mx-10 mt-[-2.5rem]">
+            <div className="flex items-center justify-between mb-4 md:mb-8 border-b-[6px] border-black pb-3 md:pb-4 bg-white/50 px-3 md:px-4 -mx-4 md:-mx-10 mt-[-1rem] md:mt-[-2.5rem]">
               <div className="flex gap-2">
                  <div className="w-4 h-4 bg-red-500 pixel-border-small" />
                  <div className="w-4 h-4 bg-yellow-400 pixel-border-small" />
                  <div className="w-4 h-4 bg-green-500 pixel-border-small" />
               </div>
-              <h2 className="text-sm md:text-lg font-pixel tracking-widest font-bold">Secret Letter</h2>
-              <div className="text-xl">❤️</div>
+              <h2 className="text-[10px] md:text-lg font-pixel tracking-widest font-bold">Secret Letter</h2>
+              <div className="text-base md:text-xl">❤️</div>
             </div>
 
-            <div className="flex-1 overflow-y-auto mb-6 pr-4 scrollbar-thin scrollbar-thumb-gray-400 font-vn" ref={textRef}>
-              <p className="whitespace-pre-wrap leading-relaxed text-xs md:text-sm font-medium text-gray-900">
+            <div className="flex-1 overflow-y-auto mb-4 md:mb-6 pr-2 md:pr-4 scrollbar-thin scrollbar-thumb-gray-400 font-vn" ref={textRef}>
+              <p className="whitespace-pre-wrap leading-relaxed text-[11px] md:text-sm font-medium text-gray-900">
                 {displayText}
                 {!showButtons && <span className="blink inline-block w-2 h-4 bg-black ml-1 align-middle" />}
               </p>
@@ -203,9 +201,9 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-8 p-4 bg-pink-100 border-[4px] border-black border-dashed text-center shadow-[6px_6px_0_rgba(244,114,182,0.3)]"
+                  className="mt-6 md:mt-8 p-3 md:p-4 bg-pink-100 border-[4px] border-black border-dashed text-center shadow-[6px_6px_0_rgba(244,114,182,0.3)]"
                 >
-                  <p className="text-nes-primary font-bold text-lg md:text-xl font-vn italic mb-2">
+                  <p className="text-nes-primary font-bold text-sm md:text-xl font-vn italic mb-2">
                     "Em có chấp nhận lời mời này của Quắn không?"
                   </p>
                   <div className="flex justify-center gap-1 text-red-500">
@@ -216,11 +214,11 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
             </div>
 
             {showButtons && (
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-10 relative mt-auto py-4">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 md:gap-10 relative mt-auto py-3 md:py-4">
                 <button 
                   id="confirm-button"
                   onClick={handleConfirm}
-                  className="bg-nes-success text-white px-10 py-5 cursor-pointer hover:bg-[#86efac] hover:-translate-y-1 transition-all pixel-shadow border-4 border-black font-pixel uppercase tracking-widest text-sm md:text-base active:translate-y-1"
+                  className="w-full sm:w-auto bg-nes-success text-white px-6 md:px-10 py-3 md:py-5 cursor-pointer hover:bg-[#86efac] hover:-translate-y-1 transition-all pixel-shadow border-4 border-black font-pixel uppercase tracking-widest text-[11px] md:text-base active:translate-y-1"
                 >
                   ACCEPT ❤️
                 </button>
@@ -232,7 +230,7 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
                   onMouseEnter={handleDodge}
                   onClick={handleDodge}
                   whileHover={{ scale: 1.05 }}
-                  className="bg-[#ff0000] text-white px-10 py-5 cursor-pointer hover:bg-red-400 transition-all pixel-shadow border-4 border-black font-pixel uppercase tracking-widest text-sm md:text-base active:translate-y-1"
+                  className="w-full sm:w-auto bg-[#ff0000] text-white px-6 md:px-10 py-3 md:py-5 cursor-pointer hover:bg-red-400 transition-all pixel-shadow border-4 border-black font-pixel uppercase tracking-widest text-[11px] md:text-base active:translate-y-1"
                 >
                   DECLINE 💔
                 </motion.button>
@@ -261,28 +259,28 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
             <motion.div 
               initial={{ scale: 0, rotate: -15 }}
               animate={{ scale: 1, rotate: 0 }}
-              className="relative z-20 text-center p-12 bg-white border-[12px] border-black max-w-2xl shadow-[20px_20px_0_#4ade80]"
+              className="relative z-20 text-center p-5 md:p-12 bg-white border-[12px] border-black max-w-[92vw] md:max-w-2xl shadow-[20px_20px_0_#4ade80]"
             >
-              <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-nes-success text-black px-8 py-3 font-pixel border-4 border-black shadow-[6px_6px_0_#000] rotate-3">
+              <div className="absolute -top-10 md:-top-16 left-1/2 -translate-x-1/2 bg-nes-success text-black px-4 md:px-8 py-2 md:py-3 font-pixel border-4 border-black shadow-[6px_6px_0_#000] rotate-3 text-[9px] md:text-base">
                  MISSION ACCOMPLISHED!
               </div>
 
-              <div className="text-nes-success text-8xl mb-8 animate-bounce">
+              <div className="text-nes-success text-6xl md:text-8xl mb-4 md:mb-8 animate-bounce">
                 ❤️
               </div>
               
-              <h1 className="text-3xl md:text-5xl text-black mb-8 leading-tight font-vn font-bold uppercase tracking-tighter">
+              <h1 className="text-xl md:text-5xl text-black mb-4 md:mb-8 leading-tight font-vn font-bold uppercase tracking-tighter">
                 HẸN GẶP CÔ TÍT VÀO <span className="text-nes-primary">19H THỨ BẢY</span> NÀY NHÉ!
               </h1>
 
-              <div className="bg-gray-100 p-6 border-4 border-black border-dashed mb-10">
-                <p className="text-xl md:text-2xl text-nes-warning font-pixel animate-pulse drop-shadow-sm">TU DU DU DU! SUPER MAX!</p>
+              <div className="bg-gray-100 p-4 md:p-6 border-4 border-black border-dashed mb-6 md:mb-10">
+                <p className="text-sm md:text-2xl text-nes-warning font-pixel animate-pulse drop-shadow-sm">TU DU DU DU! SUPER MAX!</p>
               </div>
 
               <button 
                 onClick={handleDownload}
                 disabled={isDownloading}
-                className="group relative bg-[#05051a] text-white px-10 py-4 font-pixel text-xs border-4 border-black shadow-[8px_8px_0_#000] active:translate-y-1 active:shadow-none transition-all disabled:opacity-50"
+                className="group relative bg-[#05051a] text-white px-6 md:px-10 py-3 md:py-4 font-pixel text-[9px] md:text-xs border-4 border-black shadow-[8px_8px_0_#000] active:translate-y-1 active:shadow-none transition-all disabled:opacity-50"
               >
                 <span className="relative z-10">
                   {isDownloading ? '[ ĐANG TẢI... ]' : '[ CHÁY QUÁ EM ƠI! ]'}
@@ -297,40 +295,6 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
         )}
       </AnimatePresence>
 
-      {/* Hidden Letter for PDF Generation - Replicating User's Image */}
-      <div className="fixed left-[-9999px] top-0">
-        <div 
-          ref={pdfRef}
-          className="w-[210mm] min-h-[297mm] p-[20mm] relative overflow-hidden"
-          style={{ 
-            backgroundImage: 'radial-gradient(#d1d5db 1.2px, transparent 1.2px)',
-            backgroundSize: '20px 20px',
-            backgroundColor: '#fffcf0',
-            color: '#333333',
-            fontFamily: '"Times New Roman", Times, serif'
-          }}
-        >
-          {/* Header Image Simulation */}
-          <div className="flex justify-center mb-12 relative" style={{ marginBottom: '3rem' }}>
-            <h1 className="text-7xl italic" style={{ color: '#a11d33', fontSize: '4.5rem' }}>Secret Letter</h1>
-            <div className="absolute top-[-10px] right-[10%] text-6xl opacity-60" style={{ color: '#fca5a5', fontSize: '3.75rem' }}>❤️</div>
-          </div>
-
-          <div className="whitespace-pre-wrap" style={{ fontSize: '1.125rem', lineHeight: '1.625', paddingLeft: '2rem', paddingRight: '2rem' }}>
-            {LETTER_CONTENT}
-          </div>
-
-          <div className="mt-20 text-right pr-12" style={{ marginTop: '5rem', textAlign: 'right', paddingRight: '3rem' }}>
-            <p className="text-xl font-medium italic" style={{ color: '#374151', fontSize: '1.25rem' }}>With Love,</p>
-            <p className="font-bold mt-2" style={{ color: '#a11d33', fontSize: '1.875rem' }}>La Quắn</p>
-          </div>
-
-          {/* Decorative Rose Simulation */}
-          <div className="absolute bottom-10 right-10 opacity-30 select-none" style={{ position: 'absolute', bottom: '2.5rem', right: '2.5rem', opacity: 0.3 }}>
-            <div style={{ fontSize: '6rem' }}>🌹</div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

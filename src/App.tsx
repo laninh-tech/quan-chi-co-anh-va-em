@@ -18,6 +18,10 @@ export default function App() {
   const preferredMusicUrl = import.meta.env.VITE_BACKGROUND_MUSIC_URL || new URL('../beauty-and-a-beat.mp3', import.meta.url).href;
 
   useEffect(() => {
+    document.title = 'Secret Letter';
+  }, []);
+
+  useEffect(() => {
     if (!musicRef.current) {
       const music = new Audio(preferredMusicUrl);
       music.loop = true;
@@ -107,7 +111,7 @@ export default function App() {
   );
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-[#05051a]">
+    <div className="relative h-[100dvh] w-full overflow-hidden bg-[#05051a]">
       {/* Starry Sky */}
       <div className="absolute inset-0 z-0">
         {[...Array(50)].map((_, i) => (
@@ -199,8 +203,8 @@ export default function App() {
       </div>
 
       {/* Characters Layer */}
-      <div className="absolute bottom-[9vh] w-full flex items-end justify-center z-20 px-4 md:px-12">
-        <div className="relative w-full max-w-4xl flex items-end justify-between">
+      <div className="absolute bottom-[9vh] w-full flex items-end justify-center z-20 px-2 sm:px-4 md:px-12">
+        <div className="relative w-full max-w-4xl flex items-end justify-between scale-[0.82] sm:scale-90 md:scale-100 origin-bottom">
           
           {/* Quắn */}
           <motion.div 
@@ -266,7 +270,7 @@ export default function App() {
                   className="fixed bottom-[3vh] left-1/2 -translate-x-1/2 cursor-pointer z-[60] py-4 pointer-events-auto"
                   onClick={() => setIsModalOpen(true)}
                 >
-                  <div className="whitespace-nowrap text-[8px] md:text-[10px] text-white opacity-60 font-bold uppercase tracking-widest animate-pulse">
+                  <div className="whitespace-nowrap text-[7px] md:text-[10px] text-white opacity-60 font-bold uppercase tracking-widest animate-pulse">
                     💌 NHẤN VÀO LÁ THƯ ĐỂ MỞ
                   </div>
                 </motion.div>
@@ -282,7 +286,7 @@ export default function App() {
       {/* Global Sound Indicator - Clickable */}
       <button
         onClick={toggleAudio}
-        className="fixed top-6 left-6 z-40 cursor-pointer hover:opacity-80 transition-opacity"
+        className="fixed top-3 left-3 md:top-6 md:left-6 z-40 cursor-pointer hover:opacity-80 transition-opacity scale-90 md:scale-100 origin-top-left"
       >
         <motion.div 
           animate={{ scale: [1, 1.05, 1] }}

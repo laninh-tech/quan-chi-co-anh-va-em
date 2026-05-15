@@ -22,10 +22,10 @@ export const Character: React.FC<CharacterProps> = ({
     <motion.div 
       animate={isWalking ? { y: [0, -6, 0] } : {}}
       transition={isWalking ? { repeat: Infinity, duration: 0.4 } : {}}
-      className="flex flex-col items-center gap-2 group"
+      className="flex flex-col items-center gap-2 group scale-90 md:scale-100 origin-bottom"
     >
       {/* Name Label Above Head */}
-      <div className="bg-white/90 text-black px-3 py-0.5 text-[9px] pixel-shadow font-bold border-2 border-black z-30 mb-1">
+      <div className="bg-white/90 text-black px-3 py-0.5 text-[8px] md:text-[9px] pixel-shadow font-bold border-2 border-black z-30 mb-1">
         {name}
       </div>
 
