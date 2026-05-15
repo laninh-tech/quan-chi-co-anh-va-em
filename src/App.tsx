@@ -223,7 +223,7 @@ export default function App() {
           {/* Quắn */}
           <motion.div 
             initial={{ left: '-20%' }}
-            animate={{ left: isMobile ? '18%' : '32%' }}
+            animate={{ left: isMobile ? '29%' : '32%' }}
             transition={{ duration: 4, ease: "linear", delay: 0.5 }}
             onAnimationComplete={handleAnimationComplete}
             className="absolute bottom-0"
@@ -256,7 +256,7 @@ export default function App() {
           {/* Tít */}
           <motion.div 
             initial={{ right: '12%' }}
-            animate={{ right: isTitMoving || isHoldingLetter || isTitHoldingLetter || chatStep > 0 ? (isMobile ? '24%' : '38%') : '12%' }}
+            animate={{ right: isTitMoving || isHoldingLetter || isTitHoldingLetter || chatStep > 0 ? (isMobile ? '29%' : '38%') : '12%' }}
             transition={{ duration: 3, ease: "linear" }}
             onAnimationComplete={() => {
               if (isTitMoving) handleTitArrived();
@@ -281,10 +281,10 @@ export default function App() {
                 <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="fixed bottom-[3vh] left-1/2 -translate-x-1/2 cursor-pointer z-[60] py-4 pointer-events-auto"
+                  className="fixed inset-x-0 bottom-1 md:bottom-[3vh] flex justify-center cursor-pointer z-[60] pointer-events-auto"
                   onClick={() => setIsModalOpen(true)}
                 >
-                  <div className="whitespace-nowrap text-[7px] md:text-[10px] text-white opacity-60 font-bold uppercase tracking-widest animate-pulse">
+                  <div className="max-w-[92vw] whitespace-nowrap text-center text-[6px] sm:text-[7px] md:text-[10px] text-white opacity-60 font-bold uppercase tracking-widest animate-pulse">
                     💌 NHẤN VÀO LÁ THƯ ĐỂ MỞ
                   </div>
                 </motion.div>
