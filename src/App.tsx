@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, ArrowRight, Volume2, ArrowDown, VolumeX } from 'lucide-react';
+import { Volume2, VolumeX } from 'lucide-react';
 import { Character } from './components/Character';
 import { LetterModal } from './components/LetterModal';
 
@@ -14,7 +14,7 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chatStep, setChatStep] = useState(0);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
+  const [viewport, setViewport] = useState({ width: window.innerWidth, height: window.innerHeight });
   const musicRef = useRef<HTMLAudioElement | null>(null);
   const preferredMusicUrl = import.meta.env.VITE_BACKGROUND_MUSIC_URL || new URL('../beauty-and-a-beat.mp3', import.meta.url).href;
 
@@ -23,17 +23,33 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const updateIsMobile = () => {
-      setIsMobile(window.innerWidth < 640);
+    const updateViewport = () => {
+      setViewport({ width: window.innerWidth, height: window.innerHeight });
     };
 
-    updateIsMobile();
-    window.addEventListener('resize', updateIsMobile);
+    updateViewport();
+    window.addEventListener('resize', updateViewport);
 
     return () => {
-      window.removeEventListener('resize', updateIsMobile);
+      window.removeEventListener('resize', updateViewport);
     };
   }, []);
+
+  const layout = useMemo(() => {
+    const designWidth = 1365;
+    const designHeight = 768;
+    const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+    const stageScale = clamp(Math.min(viewport.width / designWidth, viewport.height / designHeight), 0.62, 1);
+    const progress = (stageScale - 0.62) / (1 - 0.62);
+
+    return {
+      stageScale,
+      meetingLeft: 29 + progress * 3,
+      meetingRight: 29 + progress * 9,
+      invitationBottom: 12 + progress * 8,
+      invitationFontSize: Math.max(6, Math.round(10 * stageScale)),
+    };
+  }, [viewport]);
 
   useEffect(() => {
     if (!musicRef.current) {
@@ -41,10 +57,8 @@ export default function App() {
       music.loop = true;
       music.volume = 0.35;
       music.onerror = () => {
-        if (music.src.endsWith('/beauty-and-a-beat.mp3')) {
-          music.src = new URL('../adam_voice.wav', import.meta.url).href;
-          music.play().catch(() => {});
-        }
+        music.src = new URL('../adam_voice.wav', import.meta.url).href;
+        music.play().catch(() => {});
       };
       musicRef.current = music;
     }
@@ -66,7 +80,7 @@ export default function App() {
   }, [isAudioEnabled]);
 
   const toggleAudio = () => {
-    setIsAudioEnabled(!isAudioEnabled);
+    setIsAudioEnabled((current) => !current);
   };
 
   const handleAnimationComplete = () => {
@@ -218,12 +232,15 @@ export default function App() {
 
       {/* Characters Layer */}
       <div className="absolute bottom-[9vh] w-full flex items-end justify-center z-20 px-2 sm:px-4 md:px-12">
-        <div className={`relative w-full max-w-4xl flex items-end justify-between origin-bottom ${isMobile ? 'scale-[0.68]' : 'scale-[0.82] sm:scale-90 md:scale-100'}`}>
+        <div
+          className="relative w-full max-w-4xl flex items-end justify-between origin-bottom"
+          style={{ transform: `scale(${layout.stageScale})`, transformOrigin: 'bottom center' }}
+        >
           
           {/* Quắn */}
           <motion.div 
             initial={{ left: '-20%' }}
-            animate={{ left: isMobile ? '29%' : '32%' }}
+            animate={{ left: `${layout.meetingLeft}%` }}
             transition={{ duration: 4, ease: "linear", delay: 0.5 }}
             onAnimationComplete={handleAnimationComplete}
             className="absolute bottom-0"
@@ -256,7 +273,7 @@ export default function App() {
           {/* Tít */}
           <motion.div 
             initial={{ right: '12%' }}
-            animate={{ right: isTitMoving || isHoldingLetter || isTitHoldingLetter || chatStep > 0 ? (isMobile ? '29%' : '38%') : '12%' }}
+            animate={{ right: isTitMoving || isHoldingLetter || isTitHoldingLetter || chatStep > 0 ? `${layout.meetingRight}%` : '12%' }}
             transition={{ duration: 3, ease: "linear" }}
             onAnimationComplete={() => {
               if (isTitMoving) handleTitArrived();
@@ -276,23 +293,28 @@ export default function App() {
             </AnimatePresence>
 
             {/* Simplified Instructions below character */}
-            <AnimatePresence>
-              {showInvitation && !isModalOpen && (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="fixed inset-x-0 bottom-1 md:bottom-[3vh] flex justify-center cursor-pointer z-[60] pointer-events-auto"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  <div className="max-w-[92vw] whitespace-nowrap text-center text-[6px] sm:text-[7px] md:text-[10px] text-white opacity-60 font-bold uppercase tracking-widest animate-pulse">
-                    💌 NHẤN VÀO LÁ THƯ ĐỂ MỞ
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </motion.div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showInvitation && !isModalOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-x-0 flex justify-center cursor-pointer z-[60] pointer-events-auto"
+            style={{ bottom: `${layout.invitationBottom}px` }}
+            onClick={() => setIsModalOpen(true)}
+          >
+            <div
+              className="max-w-[92vw] whitespace-nowrap text-center text-white opacity-60 font-bold uppercase tracking-widest animate-pulse"
+              style={{ fontSize: `${layout.invitationFontSize}px` }}
+            >
+              💌 NHẤN VÀO LÁ THƯ ĐỂ MỞ
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Letter Modal */}
       <LetterModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

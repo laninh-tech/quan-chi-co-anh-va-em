@@ -35,7 +35,6 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
 
   const dowThuPdfUrl = new URL('../../DowThu.pdf', import.meta.url).href;
   const textRef = useRef<HTMLDivElement>(null);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -66,9 +65,7 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
       if (adamVoice) {
         utterance.voice = adamVoice;
       }
-      
-      utteranceRef.current = utterance;
-      
+
       // Start speaking after a short delay
       setTimeout(() => {
         window.speechSynthesis.cancel(); // Cancel any ongoing speech
@@ -87,7 +84,7 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
     }
   }, [isOpen]);
 
-  const handleDodge = (e: React.MouseEvent) => {
+  const handleDodge = () => {
     const rangeX = window.innerWidth * 0.8;
     const rangeY = window.innerHeight * 0.8;
     
