@@ -14,11 +14,25 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chatStep, setChatStep] = useState(0);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const musicRef = useRef<HTMLAudioElement | null>(null);
   const preferredMusicUrl = import.meta.env.VITE_BACKGROUND_MUSIC_URL || new URL('../beauty-and-a-beat.mp3', import.meta.url).href;
 
   useEffect(() => {
     document.title = 'Secret Letter';
+  }, []);
+
+  useEffect(() => {
+    const updateIsMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    updateIsMobile();
+    window.addEventListener('resize', updateIsMobile);
+
+    return () => {
+      window.removeEventListener('resize', updateIsMobile);
+    };
   }, []);
 
   useEffect(() => {
@@ -204,12 +218,12 @@ export default function App() {
 
       {/* Characters Layer */}
       <div className="absolute bottom-[9vh] w-full flex items-end justify-center z-20 px-2 sm:px-4 md:px-12">
-        <div className="relative w-full max-w-4xl flex items-end justify-between scale-[0.82] sm:scale-90 md:scale-100 origin-bottom">
+        <div className={`relative w-full max-w-4xl flex items-end justify-between origin-bottom ${isMobile ? 'scale-[0.68]' : 'scale-[0.82] sm:scale-90 md:scale-100'}`}>
           
           {/* Quắn */}
           <motion.div 
             initial={{ left: '-20%' }}
-            animate={{ left: '32%' }}
+            animate={{ left: isMobile ? '18%' : '32%' }}
             transition={{ duration: 4, ease: "linear", delay: 0.5 }}
             onAnimationComplete={handleAnimationComplete}
             className="absolute bottom-0"
@@ -242,7 +256,7 @@ export default function App() {
           {/* Tít */}
           <motion.div 
             initial={{ right: '12%' }}
-            animate={{ right: isTitMoving || isHoldingLetter || isTitHoldingLetter || chatStep > 0 ? '38%' : '12%' }}
+            animate={{ right: isTitMoving || isHoldingLetter || isTitHoldingLetter || chatStep > 0 ? (isMobile ? '24%' : '38%') : '12%' }}
             transition={{ duration: 3, ease: "linear" }}
             onAnimationComplete={() => {
               if (isTitMoving) handleTitArrived();
